@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What is the Code…</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background:#000; color:#fff; font-family:system-ui,-apple-system,sans-serif;
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      overflow:hidden; position:relative; transition:background .8s ease;
+    }
+    #code-section { text-align:center; max-width:420px; width:90%; transition:opacity 1.2s ease; }
+    h1 { font-size:1.7rem; margin-bottom:28px; font-weight:400; letter-spacing:1.5px; }
+    input {
+      width:100%; padding:15px 18px; font-size:1.25rem; border:2px solid #444;
+      border-radius:10px; background:#111; color:#fff; outline:none; text-align:center;
+      letter-spacing:2px; transition:color .3s ease;
+    }
+    input:focus { border-color:#777; }
+    input.error { color:#ff3333; }
+    button {
+      margin-top:18px; width:100%; padding:14px; font-size:1.15rem;
+      background:#fff; color:#000; border:none; border-radius:10px;
+      cursor:pointer; font-weight:600;
+    }
+    #flowers-container {
+      display:flex; justify-content:center; gap:25px; margin-top:30px;
+      min-height:80px; flex-wrap:wrap;
+    }
+    .flower {
+      font-size:3.2rem; cursor:pointer; transition:transform .3s ease;
+      position:relative; user-select:none; line-height:1; opacity:0;
+      animation:fadeInFlower .4s ease forwards;
+    }
+    @keyframes fadeInFlower { to { opacity:1; } }
+    .flower:active { transform:scale(.9); }
+    .flower.aura-red { animation:pulse-red 1.2s ease-in-out infinite; }
+    .flower.aura-blue { animation:pulse-blue 1.2s ease-in-out infinite; }
+    .flower.aura-purple { animation:pulse-purple 1.2s ease-in-out infinite; }
+    @keyframes pulse-red {
+      0%,100%{filter:drop-shadow(0 0 4px #ff0000);text-shadow:0 0 8px #ff0000}
+      50%{filter:drop-shadow(0 0 18px #ff0000);text-shadow:0 0 25px #ff0000,0 0 40px #ff3333}
+    }
+    @keyframes pulse-blue {
+      0%,100%{filter:drop-shadow(0 0 4px #00bfff);text-shadow:0 0 8px #00bfff}
+      50%{filter:drop-shadow(0 0 18px #00bfff);text-shadow:0 0 25px #00bfff,0 0 40px #1e90ff}
+    }
+    @keyframes pulse-purple {
+      0%,100%{filter:drop-shadow(0 0 4px #bf00ff);text-shadow:0 0 8px #bf00ff}
+      50%{filter:drop-shadow(0 0 18px #bf00ff);text-shadow:0 0 25px #bf00ff,0 0 40px #da70d6}
+    }
+    .flower-glitch-red{animation:flowerGlitch .35s infinite,pulse-red 1.2s ease-in-out infinite;color:#ff3333}
+    .flower-glitch-blue{animation:flowerGlitch .35s infinite,pulse-blue 1.2s ease-in-out infinite;color:#00bfff}
+    .flower-glitch-purple{animation:flowerGlitch .35s infinite,pulse-purple 1.2s ease-in-out infinite;color:#bf00ff}
+    @keyframes flowerGlitch {
+      0%{transform:translate(0)}20%{transform:translate(-4px,3px)}
+      40%{transform:translate(-3px,-4px)}60%{transform:translate(4px,2px)}
+      80%{transform:translate(3px,-3px)}100%{transform:translate(0)}
+    }
+    .glitch,.glitch-purple{position:relative;animation:glitch .4s cubic-bezier(.25,.46,.45,.94) both infinite}
+    .glitch::before,.glitch::after,.glitch-purple::before,.glitch-purple::after{
+      content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;
+    }
+    .glitch::before,.glitch-purple::before{
+      left:2px;clip:rect(44px,450px,56px,0);animation:glitch-anim .4s infinite linear alternate-reverse;
+    }
+    .glitch::before{text-shadow:-2px 0 #ff0000}
+    .glitch::after{left:-2px;text-shadow:-2px 0 #00ffff,2px 2px #ff0000;animation:glitch-anim2 .4s infinite linear alternate-reverse}
+    .glitch-purple::before{text-shadow:-2px 0 #bf00ff}
+    .glitch-purple::after{left:-2px;text-shadow:-2px 0 #da70d6,2px 2px #bf00ff;animation:glitch-anim2 .4s infinite linear alternate-reverse}
+    @keyframes glitch {
+      0%{transform:translate(0)}20%{transform:translate(-3px,3px)}
+      40%{transform:translate(-3px,-3px)}60%{transform:translate(3px,3px)}
+      80%{transform:translate(3px,-3px)}100%{transform:translate(0)}
+    }
+    @keyframes glitch-anim {
+      0%{clip:rect(10px,9999px,30px,0)}20%{clip:rect(80px,9999px,90px,0)}
+      40%{clip:rect(30px,9999px,50px,0)}60%{clip:rect(70px,9999px,85px,0)}
+      80%{clip:rect(15px,9999px,40px,0)}100%{clip:rect(50px,9999px,70px,0)}
+    }
+    @keyframes glitch-anim2 {
+      0%{clip:rect(65px,9999px,80px,0)}20%{clip:rect(20px,9999px,35px,0)}
+      40%{clip:rect(55px,9999px,75px,0)}60%{clip:rect(5px,9999px,25px,0)}
+      80%{clip:rect(40px,9999px,60px,0)}100%{clip:rect(75px,9999px,95px,0)}
+    }
+    .glitch-red::before{text-shadow:-2px 0 #ff0000}
+    .glitch-red::after{text-shadow:-2px 0 #ff0000,2px 2px #ff3333}
+    #message-container {
+      position:absolute;top:0;left:0;width:100%;height:100%;
+      display:flex;align-items:center;justify-content:center;pointer-events:none;
+      opacity:0;transition:opacity 1s ease;
+    }
+    .msg {
+      font-size:1.6rem;color:#fff;text-align:center;max-width:85%;line-height:1.5;
+      opacity:0;position:absolute;transition:opacity 1.2s ease;
+    }
+    #video-section,#video-section-2{display:none;width:100%;max-width:900px;padding:20px}
+    video{width:100%;border-radius:8px;background:#000}
+    #final-screen,#final-screen-jayla{
+      position:fixed;inset:0;background:#000;display:flex;align-items:center;
+      justify-content:center;opacity:0;pointer-events:none;z-index:100;transition:opacity 1.5s ease;
+    }
+    #final-message,#final-message-jayla{font-size:1.8rem;color:#fff;opacity:0;transition:opacity 1.5s ease}
+    #red-glitch,#purple-glitch{
+      position:fixed;inset:0;pointer-events:none;z-index:90;opacity:0;
+      background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,0,0,.15) 2px,rgba(255,0,0,.15) 4px);
+      animation:screen-glitch .15s infinite;
+    }
+    #purple-glitch{background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(191,0,255,.18) 2px,rgba(191,0,255,.18) 4px)}
+    @keyframes screen-glitch {
+      0%{transform:translate(0,0);opacity:.7}25%{transform:translate(-4px,2px);opacity:.9}
+      50%{transform:translate(3px,-3px);opacity:.6}75%{transform:translate(-2px,4px);opacity:.85}
+      100%{transform:translate(0,0);opacity:.7}
+    }
+    #locked-screen{
+      position:fixed;inset:0;background:#000;display:flex;align-items:center;
+      justify-content:center;opacity:0;pointer-events:none;z-index:200;transition:opacity 1.5s ease;
+    }
+    #locked-message{font-size:1.5rem;color:#ff3333;text-align:center;max-width:90%;opacity:0;transition:opacity 1.5s ease}
+  </style>
+</head>
+<body>
+
+<div id="code-section">
+  <h1>What is the Code…</h1>
+  <input type="text" id="codeInput" placeholder="Type the code here" autocomplete="off" spellcheck="false">
+  <button id="enterBtn">Enter</button>
+  <div id="flowers-container"></div>
+</div>
+
+<div id="message-container">
+  <div class="msg" id="msg1" data-text="Welcome Back, Jayden">Welcome Back, Jayden</div>
+  <div class="msg" id="msg2" data-text="I see you can for something">I see you can for something</div>
+  <div class="msg" id="msg3" data-text="Something you didn’t want to know or exist in your life">Something you didn’t want to know or exist in your life</div>
+  <div class="msg" id="msg4" data-text="Well I have it for you…">Well I have it for you…</div>
+  <div class="msg" id="msg5" data-text="I hope you enjoy, Jayden">I hope you enjoy, Jayden</div>
+</div>
+
+<div id="message-container-jayla" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;align-items:center;justify-content:center;pointer-events:none;opacity:0;transition:opacity 1s ease;">
+  <div class="msg" id="jmsg1" data-text="Jayla…?">Jayla…?</div>
+  <div class="msg" id="jmsg2" data-text="Well I didn’t expect you to come appear here">Well I didn’t expect you to come appear here</div>
+  <div class="msg" id="jmsg3" data-text="Well I know you don’t know something in your past life">Well I know you don’t know something in your past life</div>
+  <div class="msg" id="jmsg4" data-text="Well I have it just for you, the truth seeks you, Jayla…">Well I have it just for you, the truth seeks you, Jayla…</div>
+  <div class="msg" id="jmsg5" data-text="I hope I see you soon, Jayla…">I hope I see you soon, Jayla…</div>
+</div>
+
+<!-- Jayden's video -->
+<div id="video-section">
+  <video id="myVideo" playsinline controls>
+    <source src="copy_090A9872-D72C-4978-83B7-DC2314A61147.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</div>
+
+<div id="video-section-2">
+  <video id="myVideo2" playsinline controls>
+    <source src="YOUR_SECOND_VIDEO_URL_HERE.mp4" type="video/mp4">
+  </video>
+</div>
+
+<div id="final-screen"><div id="final-message" data-text="See you soon Jayden…">See you soon Jayden…</div></div>
+<div id="final-screen-jayla"><div id="final-message-jayla" data-text="See you soon, Jayla…">See you soon, Jayla…</div></div>
+<div id="red-glitch"></div>
+<div id="purple-glitch"></div>
+<div id="locked-screen"><div id="locked-message">pathetic, Try Again Next Time, Human…</div></div>
+
+<script>
+const CORRECT_CODE="N0EC@SP3JAYD3N";
+const SPECIAL_CODE="J@YLAWA$H3R3";
+const TELEPORT_CODE="R3AL$UFFING";
+const FLOWER_CODES={
+  "R3GR3TTING":{emoji:"🌹",heart:"❤️",class:"aura-red",bg:"#1a0000",glitch:"flower-glitch-red"},
+  "PE@C3FUL":{emoji:"🌸",heart:"💙",class:"aura-blue",bg:"#001a2a",glitch:"flower-glitch-blue"},
+  "B3TR@Y@L":{emoji:"💜",heart:"💜",class:"aura-purple",bg:"#1a001a",glitch:"flower-glitch-purple"}
+};
+
+let wrongAttempts=0;
+const shownFlowers=new Set();
+let allFlowersUnlocked=false;
+const flowerElements={};
+
+const codeSection=document.getElementById("code-section");
+const input=document.getElementById("codeInput");
+const enterBtn=document.getElementById("enterBtn");
+const flowersContainer=document.getElementById("flowers-container");
+const messageContainer=document.getElementById("message-container");
+const messageContainerJayla=document.getElementById("message-container-jayla");
+const videoSection=document.getElementById("video-section");
+const videoSection2=document.getElementById("video-section-2");
+const video=document.getElementById("myVideo");
+const video2=document.getElementById("myVideo2");
+const finalScreen=document.getElementById("final-screen");
+const finalScreenJayla=document.getElementById("final-screen-jayla");
+const finalMessage=document.getElementById("final-message");
+const finalMessageJayla=document.getElementById("final-message-jayla");
+const redGlitch=document.getElementById("red-glitch");
+const purpleGlitch=document.getElementById("purple-glitch");
+const lockedScreen=document.getElementById("locked-screen");
+const lockedMessage=document.getElementById("locked-message");
+const messages=["msg1","msg2","msg3","msg4","msg5"];
+const jaylaMessages=["jmsg1","jmsg2","jmsg3","jmsg4","jmsg5"];
+
+function checkCode(){
+  const entered=input.value.trim().toUpperCase();
+  if(entered===TELEPORT_CODE){window.location.href="https://gamebanana.com/mods/712310";return;}
+  if(FLOWER_CODES[entered]){
+    const flowerData=FLOWER_CODES[entered];
+    if(!shownFlowers.has(entered)){
+      shownFlowers.add(entered);createFlower(entered,flowerData);
+      if(shownFlowers.size===3){allFlowersUnlocked=true;transformToHearts();}
+    }
+    input.value="";return;
+  }
+  if(entered===SPECIAL_CODE){
+    if(allFlowersUnlocked){
+      document.body.style.background="#000";codeSection.style.opacity="0";
+      setTimeout(()=>{codeSection.style.display="none";startJaylaSequence();},1200);
+    }else handleWrong();
+    return;
+  }
+  if(entered===CORRECT_CODE){
+    document.body.style.background="#000";codeSection.style.opacity="0";
+    setTimeout(()=>{codeSection.style.display="none";startMessageSequence();},1200);
+    return;
+  }
+  handleWrong();
+}
+
+function handleWrong(){
+  wrongAttempts++;input.value="Try Again…";input.classList.add("error");
+  setTimeout(()=>{input.value="";input.classList.remove("error");input.focus();},1800);
+  if(wrongAttempts>=5){
+    setTimeout(()=>{
+      codeSection.style.opacity="0";
+      setTimeout(()=>{lockedScreen.style.opacity="1";lockedScreen.style.pointerEvents="auto";lockedMessage.style.opacity="1";},1000);
+    },500);
+  }
+}
+
+function createFlower(code,data){
+  const flower=document.createElement("div");
+  flower.className="flower "+data.glitch;flower.textContent=data.emoji;flower.dataset.aura=data.class;
+  setTimeout(()=>{flower.classList.remove(data.glitch);flower.style.color="";},3000);
+  flower.addEventListener("click",()=>{
+    document.body.style.background=data.bg;
+    flower.classList.remove("aura-red","aura-blue","aura-purple");
+    flower.classList.add(data.class);
+    setTimeout(()=>flower.classList.remove(data.class),4000);
+  });
+  flowersContainer.appendChild(flower);flowerElements[code]=flower;
+}
+function transformToHearts(){
+  for(const code in flowerElements) flowerElements[code].textContent=FLOWER_CODES[code].heart;
+}
+enterBtn.addEventListener("click",checkCode);
+input.addEventListener("keyup",e=>{if(e.key==="Enter")checkCode();});
+
+function startMessageSequence(){
+  messageContainer.style.opacity="1";
+  let index=0;
+  function showNext(){
+    if(index>0){
+      const prev=document.getElementById(messages[index-1]);
+      prev.style.opacity="0";prev.classList.remove("glitch","glitch-red");
+    }
+    if(index>=messages.length){
+      setTimeout(()=>{
+        messageContainer.style.opacity="0";
+        setTimeout(()=>{
+          videoSection.style.display="block";
+          video.currentTime=0;
+          video.play().catch(()=>{});
+        },1200);
+      },1000);
+      return;
+    }
+    const current=document.getElementById(messages[index]);
+    current.style.opacity="1";
+    if(index===0)current.style.color="#fff";
+    else{current.style.color="#ff3333";current.classList.add("glitch","glitch-red");}
+    setTimeout(()=>{
+      if(index===0)current.classList.add("glitch","glitch-red");
+      if(index===messages.length-1){current.classList.remove("glitch-red");current.classList.add("glitch");}
+      setTimeout(()=>{index++;showNext();},800);
+    },10000);
+  }
+  showNext();
+}
+
+video.addEventListener("ended",()=>{
+  videoSection.style.display="none";redGlitch.style.opacity="1";finalScreen.style.opacity="1";
+  setTimeout(()=>{
+    finalMessage.style.opacity="1";finalMessage.classList.add("glitch");
+    setTimeout(()=>{finalMessage.style.opacity="0";redGlitch.style.opacity="0";},4500);
+  },1500);
+});
+
+function startJaylaSequence(){
+  messageContainerJayla.style.display="flex";messageContainerJayla.style.opacity="1";
+  let index=0;
+  function showNext(){
+    if(index>0){
+      const prev=document.getElementById(jaylaMessages[index-1]);
+      prev.style.opacity="0";prev.classList.remove("glitch-purple");
+    }
+    if(index>=jaylaMessages.length){
+      setTimeout(()=>{
+        messageContainerJayla.style.opacity="0";
+        setTimeout(()=>{videoSection2.style.display="block";video2.play().catch(()=>{});},1200);
+      },1000);
+      return;
+    }
+    const current=document.getElementById(jaylaMessages[index]);
+    current.style.opacity="1";
+    if(index===0)current.style.color="#fff";
+    else{current.style.color="#da70d6";current.classList.add("glitch-purple");}
+    setTimeout(()=>{
+      if(index===0)current.classList.add("glitch-purple");
+      if(index===jaylaMessages.length-1)current.classList.add("glitch-purple");
+      setTimeout(()=>{index++;showNext();},800);
+    },10000);
+  }
+  showNext();
+}
+
+video2.addEventListener("ended",()=>{
+  videoSection2.style.display="none";purpleGlitch.style.opacity="1";finalScreenJayla.style.opacity="1";
+  setTimeout(()=>{
+    finalMessageJayla.style.opacity="1";finalMessageJayla.classList.add("glitch-purple");
+    setTimeout(()=>{finalMessageJayla.style.opacity="0";purpleGlitch.style.opacity="0";},4500);
+  },1500);
+});
+</script>
+</body>
+</html>
